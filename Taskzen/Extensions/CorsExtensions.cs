@@ -1,4 +1,4 @@
-namespace Taskzen.API.Services;
+namespace Taskzen.Extensions;
 
 public static class CorsExtensions
 {
@@ -9,10 +9,9 @@ public static class CorsExtensions
         {
             options.AddPolicy("AllowFrontend", policy =>
             {
-                policy.WithOrigins(corsOrigins)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                // policy.WithOrigins(corsOrigins)
+                policy.AllowAnyOrigin()
+                    .AllowAnyMethod();
             });
         });
         

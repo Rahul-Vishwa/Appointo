@@ -1,0 +1,8 @@
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+dotnet add package DotNetEnv
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+
+
+Host=aws-0-ap-south-1.pooler.supabase.com;Port=5432;Username=postgres.hwklvppfmycqstsqilgn;Password=YOUR-PASSWORD;Database=postgres;SslMode=Require;Trust Server Certificate=true;

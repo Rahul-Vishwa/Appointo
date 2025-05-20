@@ -401,3 +401,6 @@ FodyWeavers.xsd
 
 # Script files
 *.sh
+
+# others
+*.txt

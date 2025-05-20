@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Taskzen.API.Services;
+namespace Taskzen.Extensions;
 
 public static class JwtAuthenticationExtensions
 {
