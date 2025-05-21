@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Taskzen.DTOs;
 using Taskzen.Entities;
 
@@ -12,7 +13,7 @@ public interface IAppointment
     Task<SaveAppointmentResultDto> SaveAppointment(SaveAppointmentDto appointment);
     Task<Appointment?> EditAppointment(EditAppointmentDto appointment);
     Task<Appointment?> DeleteAppointment(int id);
-    Task<List<GetUserAppointmentsDto>> GetUserAppointments(int createdBy);
+    Task<GetUserAppointmentResultDto> GetUserAppointments(int createdBy, int page, int pageSize);
     Task<string?> ApplyLeave(ApplyLeaveDto leave);
     Task<GetLeaveDto?> GetLeaveByDate(DateOnly date);
     Task<string?> EditLeave(EditLeaveDto leave);

@@ -96,12 +96,12 @@ public class AppointmentController(IAppointment appointment, AppDbContext dbCont
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetUserAppointments([FromQuery] int id)
+    public async Task<IActionResult> GetUserAppointments([FromQuery] int id, int page, int pageSize)
     {
         var userId = await User.GetUserId(dbContext);
         if (userId != null)
         {
-            var appointments = await appointment.GetUserAppointments(id == 0 ? (int)userId : id);
+            var appointments = await appointment.GetUserAppointments(id == 0 ? (int)userId : id, page, pageSize);
             return Ok(appointments);
         }
         return BadRequest("User not found.");

@@ -20,11 +20,17 @@ public class AppDbContext: DbContext
             
             entity.HasIndex(u => u.Email)
                 .IsUnique();
+            
+            entity.Property(e => e.Active)
+                .HasDefaultValue(true);
         });
         
         builder.Entity<Schedule>(entity =>
         {
             entity.HasKey(e => e.Id);
+
+            entity.HasIndex(s => new { s.CreatedBy, s.Active } );
+            entity.HasIndex(s => new { s.EffectiveFrom, s.Active } );
             
             entity.HasOne(s => s.CreatedByUser)
                 .WithMany()
@@ -35,11 +41,17 @@ public class AppDbContext: DbContext
                 .WithMany()
                 .HasForeignKey(s => s.ModifiedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.Property(e => e.Active)
+                .HasDefaultValue(true);
         });
 
         builder.Entity<Appointment>(entity =>
         {
             entity.HasKey(e => e.Id);
+            
+            entity.HasIndex(s => new { s.Date, s.Active }); 
+            entity.HasIndex(s => new { s.CreatedBy, s.Date, s.Active });
             
             entity.HasOne(s => s.CreatedByUser)
                 .WithMany(u => u.CreatedAppointments)
@@ -50,11 +62,16 @@ public class AppDbContext: DbContext
                 .WithMany(u => u.ModifiedAppointments)
                 .HasForeignKey(s => s.ModifiedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.Property(e => e.Active)
+                .HasDefaultValue(true);
         });
         
         builder.Entity<Leave>(entity =>
         {
             entity.HasKey(e => e.Id);
+            
+            entity.HasIndex(s => new { s.Date });
             
             entity.HasOne(s => s.CreatedByUser)
                 .WithMany(u => u.CreatedLeaves)
@@ -65,6 +82,9 @@ public class AppDbContext: DbContext
                 .WithMany(u => u.ModifiedLeaves)
                 .HasForeignKey(s => s.ModifiedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            entity.Property(e => e.Active)
+                .HasDefaultValue(true);
         });
     }
     

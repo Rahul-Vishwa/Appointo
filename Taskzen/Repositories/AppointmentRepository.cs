@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Taskzen.Data;
 using Taskzen.Data.Migrations;
@@ -26,7 +27,7 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
     private async Task<Schedule?> GetScheduleByDate(DateOnly date)
     {
         var schedules = await dbContext.Schedules
-            .Where(s => s.EffectiveFrom <= date)
+            .Where(s => s.EffectiveFrom <= date && s.Active == true)
             .OrderByDescending(s => s.EffectiveFrom)
             .ToListAsync();
         
@@ -79,7 +80,9 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
     {
         var appointment = await dbContext.Appointments
             .FirstOrDefaultAsync(a =>
-                a.Date == slot.Date && a.CreatedBy == slot.CreatedBy
+                a.Date == slot.Date && 
+                a.CreatedBy == slot.CreatedBy &&
+                a.Active == true
             );
 
         if (appointment != null)
@@ -97,7 +100,7 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
     public async Task<List<string>> GetBookedSlots(GetBookedSlotsDto slot)
     {
         return await dbContext.Appointments
-            .Where(a => a.Date == slot.Date)
+            .Where(a => a.Date == slot.Date && a.Active == true)
             .Select(a=>a.Time)
             .ToListAsync();       
     }
@@ -105,7 +108,7 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
     public async Task<List<GetBookedSlotsWithDetailsDto>> GetBookedSlotsWithDetails(GetBookedSlotsDto slot)
     {
         return await dbContext.Appointments
-            .Where(a => a.Date == slot.Date)
+            .Where(a => a.Date == slot.Date && a.Active == true)
             .Include(a => a.CreatedByUser)
             .Select(a=>new GetBookedSlotsWithDetailsDto
             {
@@ -121,7 +124,8 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
     {
         var appointmentCount = dbContext.Appointments.Count(a =>
             a.CreatedAt > new DateTime() &&
-            a.CreatedBy == appointment.CreatedBy
+            a.CreatedBy == appointment.CreatedBy &&
+            a.Active == true
         );
 
         if (appointmentCount >= 3)
@@ -135,7 +139,8 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
 
         var existingAppointment = await dbContext.Appointments.FirstOrDefaultAsync(a =>
             a.Date == appointment.Date &&
-            a.CreatedBy == appointment.CreatedBy
+            a.CreatedBy == appointment.CreatedBy &&
+            a.Active == true
         );
         if (existingAppointment == null)
         {
@@ -186,7 +191,7 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
 
         if (appointment != null)
         {
-            dbContext.Appointments.Remove(appointment);
+            appointment.Active = false;
             await dbContext.SaveChangesAsync();
             
             return appointment;
@@ -194,7 +199,7 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
         return null;
     }
 
-    public async Task<List<GetUserAppointmentsDto>> GetUserAppointments(int createdBy)
+    public async Task<GetUserAppointmentResultDto> GetUserAppointments(int createdBy, int page, int pageSize)
     {
         var user = await dbContext.Users
             .Include(u => u.CreatedAppointments)
@@ -202,10 +207,16 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
             .FirstOrDefaultAsync(u => u.Id == createdBy);
         
         if (user == null)
-            return new List<GetUserAppointmentsDto>();
+            return new GetUserAppointmentResultDto{
+                Appointments = new List<GetUserAppointmentsDto>(),
+                TotalCount = 0
+            };
         
         var appointments = user.CreatedAppointments
+            .Where(a => a.Active == true)
             .OrderByDescending(a => a.Date)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(a => new GetUserAppointmentsDto
             {
                 Id = a.Id,
@@ -217,7 +228,10 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
             })
             .ToList();
         
-        return appointments;
+        return new GetUserAppointmentResultDto{
+            Appointments = appointments,
+            TotalCount = appointments.Count
+        };;
     }
     
     public async Task<string?> ApplyLeave(ApplyLeaveDto leave)
@@ -257,7 +271,11 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
         var endDate = startDate.AddDays(10);
 
         var appointments = await dbContext.Appointments
-            .Where(a => a.Date >= startDate && a.Date <= endDate)
+            .Where(a =>
+                a.Date >= startDate &&
+                a.Date <= endDate &&
+                a.Active == true
+            )
             .ToListAsync();
 
         for (var date = startDate; date <= endDate; date = date.AddDays(1))
@@ -299,7 +317,7 @@ public class AppointmentRepository(AppDbContext dbContext): IAppointment
             throw new InvalidOperationException("Schedule not found.");
             
         var appointments = await dbContext.Appointments
-            .Where(a => a.Date == leave.Date)
+            .Where(a => a.Date == leave.Date && a.Active == true)
             .ToListAsync(); 
             
         var filteredAppointments = appointments.Where(a =>

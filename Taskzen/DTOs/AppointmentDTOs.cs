@@ -45,6 +45,12 @@ public record EditAppointmentDto
     internal int ModifiedBy { get; set; }
 }
 
+public record GetUserAppointmentResultDto
+{
+    public required List<GetUserAppointmentsDto> Appointments { get; init; }
+    public int TotalCount { get; init; }
+}
+
 public record GetUserAppointmentsDto
 {
     public int Id { get; init; }

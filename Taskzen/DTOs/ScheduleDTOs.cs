@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.JavaScript;
+using Taskzen.Entities;
 
 namespace Taskzen.DTOs;
 
@@ -12,6 +13,18 @@ public record AddScheduleDto
     public int SlotDuration { get; init; }
     public DateOnly EffectiveFrom { get; init; }
     internal int CreatedBy { get; set; }
+}
+
+public record AddScheduleResultDto
+{
+    public Schedule? Schedule { get; init; }
+    public string? Message { get; init; }
+}
+
+public record GetScheduleResultDto
+{
+    public required List<GetScheduleDto> Schedule { get; init; }
+    public int TotalCount { get; init; }
 }
     
 public record GetScheduleDto

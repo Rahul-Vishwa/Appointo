@@ -30,6 +30,11 @@ namespace Taskzen.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -51,9 +56,11 @@ namespace Taskzen.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
-
                     b.HasIndex("ModifiedBy");
+
+                    b.HasIndex("Date", "Active");
+
+                    b.HasIndex("CreatedBy", "Date", "Active");
 
                     b.ToTable("Appointments");
                 });
@@ -65,6 +72,11 @@ namespace Taskzen.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -95,6 +107,8 @@ namespace Taskzen.Data.Migrations
 
                     b.HasIndex("CreatedBy");
 
+                    b.HasIndex("Date");
+
                     b.HasIndex("ModifiedBy");
 
                     b.ToTable("Leaves");
@@ -107,6 +121,11 @@ namespace Taskzen.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("BreakEndTime")
                         .IsRequired()
@@ -151,9 +170,11 @@ namespace Taskzen.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
-
                     b.HasIndex("ModifiedBy");
+
+                    b.HasIndex("CreatedBy", "Active");
+
+                    b.HasIndex("EffectiveFrom", "Active");
 
                     b.ToTable("Schedules");
                 });
@@ -165,6 +186,11 @@ namespace Taskzen.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Email")
                         .IsRequired()

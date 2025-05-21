@@ -23,17 +23,33 @@ public class ScheduleController(ISchedule schedule, AppDbContext dbContext) : Co
         if (userId != null)
         {
             scheduleData.CreatedBy = (int)userId;
-            var newSchedule = await schedule.SaveSchedule(scheduleData);
-            return CreatedAtAction(nameof(Save), new { id = newSchedule.Id }, newSchedule);
+            var scheduleResult = await schedule.SaveSchedule(scheduleData);
+
+            if (scheduleResult.Schedule != null)
+            {
+                return CreatedAtAction(nameof(Save), new { id = scheduleResult.Schedule.Id }, scheduleResult.Schedule);
+            }
+            return BadRequest(scheduleResult.Message);
         }    
         
         return BadRequest("User not found");
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetSchedules()
+    public async Task<IActionResult> GetSchedules(int page, int pageSize)
     {
-        var schedules = await schedule.GetSchedules();
+        var schedules = await schedule.GetSchedules(page, pageSize);
         return Ok(schedules);
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteSchedule(int id)
+    {
+        var deletedSchedule = await schedule.DeleteSchedule(id);
+        if (deletedSchedule != null)
+        {
+            return NoContent();
+        }
+        return BadRequest("Schedule not found.");
     }
 }

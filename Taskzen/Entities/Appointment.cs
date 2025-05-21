@@ -9,6 +9,7 @@ public class Appointment{
     public int CreatedBy { get; init; }
     public DateTime? ModifiedAt { get; set; }
     public int? ModifiedBy { get; set; }
+    public bool Active { get; set; } = true;
 
     public User? CreatedByUser { get; init; }
     public User? ModifiedByUser { get; init; }

@@ -5,6 +5,7 @@ namespace Taskzen.Interfaces;
 
 public interface ISchedule
 {
-    Task<Schedule> SaveSchedule(AddScheduleDto schedule);
-    Task<List<GetScheduleDto>> GetSchedules();
+    Task<AddScheduleResultDto> SaveSchedule(AddScheduleDto schedule);
+    Task<GetScheduleResultDto> GetSchedules(int page, int pageSize);
+    Task<Schedule?> DeleteSchedule(int id);
 }

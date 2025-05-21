@@ -11,7 +11,8 @@ public class Schedule{
     public required string BreakEndTime { get; init; }
     public int SlotDuration { get; init; }
     public DateOnly EffectiveFrom { get; init; }
-    public bool? IsActive { get; init; }
+    public bool? IsActive { get; set; }
+    public bool Active { get; set; } = true;
     
     public DateTime CreatedAt { get; init; }
     public int CreatedBy { get; init; }

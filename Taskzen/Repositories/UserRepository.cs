@@ -17,31 +17,23 @@ public class UserRepository: IUser
     
     public async Task<User> AddUser(AddUserDto user)
     {
-        try
+        User? existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+    
+        if (existingUser == null)
         {
-            User? existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
-        
-            if (existingUser == null)
+            User newUser = new User
             {
-                User newUser = new User
-                {
-                    Email = user.Email,
-                    Name = user.Name,
-                    Picture = user.Picture,
-                };
-                
-                await _dbContext.Users.AddAsync(newUser);
-                await _dbContext.SaveChangesAsync();
-                
-                return newUser;
-            }
+                Email = user.Email,
+                Name = user.Name,
+                Picture = user.Picture,
+            };
+            
+            await _dbContext.Users.AddAsync(newUser);
+            await _dbContext.SaveChangesAsync();
+            
+            return newUser;
+        }
 
-            return existingUser;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        return existingUser;
     }
 }

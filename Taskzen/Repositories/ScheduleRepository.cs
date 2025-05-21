@@ -8,8 +8,21 @@ namespace Taskzen.Repositories;
 
 public class ScheduleRepository(AppDbContext dbContext): ISchedule
 {
-    public async Task<Entities.Schedule> SaveSchedule(AddScheduleDto schedule)
+    public async Task<AddScheduleResultDto> SaveSchedule(AddScheduleDto schedule)
     {
+        var existingSchedule = await dbContext.Schedules.FirstOrDefaultAsync(s =>
+            s.EffectiveFrom == schedule.EffectiveFrom &&
+            s.Active == true
+        );
+
+        if (existingSchedule != null)
+        {
+            return new AddScheduleResultDto
+            {
+                Message = "Schedule already exists with same effective from."
+            };
+        }
+        
         var newSchedule = new Schedule{
             DaysAvailable = schedule.DaysAvailable,
             StartTime = schedule.StartTime,
@@ -18,19 +31,53 @@ public class ScheduleRepository(AppDbContext dbContext): ISchedule
             BreakEndTime = schedule.BreakEndTime,
             SlotDuration = schedule.SlotDuration,
             EffectiveFrom = schedule.EffectiveFrom,
-            CreatedBy = schedule.CreatedBy
+            CreatedBy = schedule.CreatedBy,
         };
         
         await dbContext.Schedules.AddAsync(newSchedule);
         await dbContext.SaveChangesAsync();
-        return newSchedule;
+        return new AddScheduleResultDto
+        {
+            Schedule = newSchedule
+        };
     }
 
-    public async Task<List<GetScheduleDto>> GetSchedules()
+    private async Task<bool> SetActiveSchedule()
     {
-        return await dbContext.Schedules
-            .Include(s => s.CreatedByUser)
+        var date = DateOnly.FromDateTime(DateTime.Now);
+        var schedules = await dbContext.Schedules
+            .Where(s => s.EffectiveFrom <= date && s.Active == true)
+            .OrderByDescending(s => s.EffectiveFrom)
+            .ToListAsync();
+        
+        var schedule = schedules.FirstOrDefault();
+
+        if (schedule != null && (schedule.IsActive == false || schedule.IsActive == null))
+        {
+            schedule.IsActive = true;
+            var activeSchedule = await dbContext.Schedules.FirstOrDefaultAsync(
+                s => s.IsActive == true && s.Active == true
+            );
+            if (activeSchedule != null)
+            {
+                activeSchedule.IsActive = false;
+            }
+            await dbContext.SaveChangesAsync();
+            return true;
+        }
+        return false;
+    }
+    
+    public async Task<GetScheduleResultDto> GetSchedules(int page, int pageSize)
+    {
+        var updated = await SetActiveSchedule();
+        
+        var schedules = await dbContext.Schedules
+            .Where(s => s.Active == true)
             .OrderByDescending(s => s.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Include(s => s.CreatedByUser)
             .Select(s => new GetScheduleDto
             {
                 Id = s.Id,
@@ -46,5 +93,26 @@ public class ScheduleRepository(AppDbContext dbContext): ISchedule
                 CreatedBy = s.CreatedByUser != null ? s.CreatedByUser.Name : null
             })
             .ToListAsync();
+
+        return new GetScheduleResultDto
+        {
+            Schedule = schedules,
+            TotalCount = schedules.Count()
+        };
+    }
+
+    public async Task<Schedule?> DeleteSchedule(int id)
+    {
+        var schedule = await dbContext.Schedules.FindAsync(id);
+
+        if (schedule != null)
+        {
+            schedule.Active = false;
+            await dbContext.SaveChangesAsync();
+
+            return schedule;
+        }
+
+        return null;
     }
 }

@@ -9,6 +9,7 @@ public class User
     public required string Name { get; init; }
     public string? Picture { get; init; }
     public DateTime? UpdatedAt { get; init; }
+    public bool Active { get; set; } = true;
     
     [JsonIgnore]
     public ICollection<Appointment> CreatedAppointments { get; set; } = new List<Appointment>();
