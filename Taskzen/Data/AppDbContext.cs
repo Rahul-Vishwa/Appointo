@@ -44,6 +44,9 @@ public class AppDbContext: DbContext
             
             entity.Property(e => e.Active)
                 .HasDefaultValue(true);
+            
+            entity.Property(a => a.CreatedAt)
+                .HasDefaultValueSql("NOW()");
         });
 
         builder.Entity<Appointment>(entity =>
@@ -65,6 +68,9 @@ public class AppDbContext: DbContext
             
             entity.Property(e => e.Active)
                 .HasDefaultValue(true);
+            
+            entity.Property(a => a.CreatedAt)
+                .HasDefaultValueSql("NOW()");
         });
         
         builder.Entity<Leave>(entity =>
@@ -85,25 +91,9 @@ public class AppDbContext: DbContext
             
             entity.Property(e => e.Active)
                 .HasDefaultValue(true);
+            
+            entity.Property(a => a.CreatedAt)
+                .HasDefaultValueSql("NOW()");
         });
-    }
-    
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var entries = ChangeTracker
-            .Entries()
-            .Where(e => e.State == EntityState.Added);
-
-        foreach (var entry in entries)
-        {
-            var createdAtProperty = entry.Metadata.FindProperty("CreatedAt");
-            if (createdAtProperty != null)
-            {
-                entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
-            }
-
-        }
-
-        return await base.SaveChangesAsync(cancellationToken);
     }
 }

@@ -10,6 +10,7 @@ public static class RegisterServices
         services.AddScoped<IUser, UserRepository>();
         services.AddScoped<IAppointment, AppointmentRepository>();
         services.AddScoped<ISchedule, ScheduleRepository>();
+        services.AddScoped<IDashboard, DashboardRepository>();
     }
 }
 

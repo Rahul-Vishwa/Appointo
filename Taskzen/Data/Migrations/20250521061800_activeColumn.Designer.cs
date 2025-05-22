@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Taskzen.Data;
@@ -11,9 +12,11 @@ using Taskzen.Data;
 namespace Taskzen.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250521061800_activeColumn")]
+    partial class activeColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,9 +39,7 @@ namespace Taskzen.Data.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
@@ -58,11 +59,9 @@ namespace Taskzen.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedBy");
+
                     b.HasIndex("ModifiedBy");
-
-                    b.HasIndex("Date", "Active");
-
-                    b.HasIndex("CreatedBy", "Date", "Active");
 
                     b.ToTable("Appointments");
                 });
@@ -81,9 +80,7 @@ namespace Taskzen.Data.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
@@ -110,8 +107,6 @@ namespace Taskzen.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedBy");
-
-                    b.HasIndex("Date");
 
                     b.HasIndex("ModifiedBy");
 
@@ -140,9 +135,7 @@ namespace Taskzen.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
@@ -176,11 +169,9 @@ namespace Taskzen.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedBy");
+
                     b.HasIndex("ModifiedBy");
-
-                    b.HasIndex("CreatedBy", "Active");
-
-                    b.HasIndex("EffectiveFrom", "Active");
 
                     b.ToTable("Schedules");
                 });
