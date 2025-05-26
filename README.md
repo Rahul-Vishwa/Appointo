@@ -20,3 +20,5 @@ A full-featured Appointment Booking System built with **Angular** and **.NET Cor
 - **Authentication:** Auth0
 - **Email:** SMTP (Google)
 - **Database:** PostgreSQL (SupaBase)
+
+This is the backend repo of the project you can find frontend repo in my repositories.
