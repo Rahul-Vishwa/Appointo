@@ -1,6 +1,6 @@
 # Appointo
 
-A full-featured Appointment Booking System built with **Angular** and **.NET Core**, designed for seamless scheduling, management, and performance.
+A Appointment Booking System built with **Angular** and **.NET Core**, designed for seamless scheduling, management, and performance.
 
 ## Features
 
