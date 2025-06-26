@@ -21,3 +21,11 @@ A full-featured Appointment Booking System built with **Angular** and **.NET Cor
 - **Email:** SMTP
 - **Database:** PostgreSQL (SupaBase)
 - **Chart:** Chart.js
+
+## Screenshots
+
+<img src="./Client/public/LandingPage.png" width="700">
+<img src="./Client/public/appointo.jpg" width="700">
+<img src="./Client/public/forms.png" width="700">
+<img src="./Client/public/allappointments.png" width="700">
+<img src="./Client/public/dashboard4.png" width="700">
