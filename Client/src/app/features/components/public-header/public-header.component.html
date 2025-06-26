@@ -1,0 +1,14 @@
+<div class="w-full py-4 px-44 flex justify-between items-center border-b-1 border-primary-color">
+    <div class="font-bold text-[17px] flex gap-4">
+        <img src="icon.svg" alt="icon" class="w-5">
+        Appointo
+    </div>
+    <div class="flex">
+        <button type="button" (click)="login()" class="mr-3 primary-button">Log in</button>
+        <span class="flex items-center px-5">
+            Sign up as 
+        </span>
+        <button type="button" (click)="getStarted('admin')" class="mr-3 secondary-button">Admin</button>
+        <button type="button" (click)="getStarted('customer')" class="secondary-button">Customer</button>
+    </div>
+</div>

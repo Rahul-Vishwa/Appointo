@@ -1,0 +1,9 @@
+.hover-class:hover{
+    background-color: var(--secondary-color);
+    color: var(--lighter-font-color);
+}
+
+.active-route{
+    background-color: var(--secondary-color);
+    color: var(--lighter-font-color);
+}

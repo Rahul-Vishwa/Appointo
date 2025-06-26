@@ -1,0 +1,219 @@
+<app-card [showFooter]="true">
+    <card-header>Appointments</card-header>
+    <card-body>
+        <div class="flex gap-20">
+            <div [formGroup]="form">
+                <app-calendar
+                    [formControl]="form.controls['date']"
+                    id="Calendar"
+                    [minDate]="minDate"
+                    [maxDate]="maxDate"
+                    (ngModelChange)="getSchedule()"
+                ></app-calendar>
+            </div>
+            <ng-container *ngTemplateOutlet="leaveMode() ? leaveTemplate : slotTemplate"></ng-container>
+        </div>
+
+    </card-body>
+    <card-footer class="flex justify-between">
+        <div class="flex gap-10">
+            <div class="flex items-center gap-2">
+                <div class="unavailable w-5 h-5 rounded-sm"></div>
+                Unavailable
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="booked w-5 h-5 rounded-sm"></div>
+                Booked
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="leave-slot w-5 h-5 rounded-sm"></div>
+                Leave
+            </div>
+        </div>
+        <div>
+            @if (editAppointmentId()) {
+                <div class="flex gap-5">
+                    <button class="primary-button" (click)="goBack()">
+                        Back
+                    </button>
+                    <button class="secondary-button" 
+                        [disabled]="
+                            !editTime() || 
+                            (
+                                originalEditDate() === form.controls['date'].value &&
+                                originalEditTime() === editTime() 
+                            )       
+                        " (click)="updateAppointment()">
+                        Update
+                    </button>
+                </div>
+            }
+            @else if (!leaveMode()) {
+                @if (!leave()?.leaveType) {
+                    <div>
+                        <button class="secondary-button" (click)="takeLeave('take')">
+                            Take Leave
+                        </button>
+                    </div>
+                }
+                @else {
+                    <div class="flex gap-5">
+                        <button class="primary-button" (click)="cancelLeave()">
+                            Cancel Leave
+                        </button>
+                        <button class="secondary-button" (click)="takeLeave('edit')">
+                            Edit Leave
+                        </button>
+                    </div>
+                }
+            }
+            @else {
+                <div class="flex gap-5">
+                    <button class="primary-button" (click)="goBack()">
+                        Back
+                    </button>
+                    <button class="secondary-button" 
+                        [disabled]="
+                           leaveType() === 'custom' && !(form.controls['fromTime'].value &&
+                            form.controls['toTime'].value)
+                        " (click)="applyLeave()">
+                        Apply                        
+                    </button>
+                </div>
+            }
+        </div>
+    </card-footer>
+</app-card>
+
+
+<ng-template #slotTemplate>
+    <div>
+        <div class="text-xl">
+            All Appointments
+        </div>
+        <div class="primary-font-color flex flex-wrap gap-4 py-5">
+            @if (leave()?.leaveType !== 'full') {
+                @for (slot of slots(); track slot) {
+                    <div 
+                        class="relative"
+                        (mouseenter)="!editAppointmentId() && slot.class === 'booked' && onMouseEnter(slot.time)"
+                        (mouseleave)="!editAppointmentId() && slot.time === showOptions() && onMouseLeave()"
+                    >
+                        <div 
+                            [class]="'custom-box-hover border rounded-full px-4 py-1 border-primary-color ' + (slot.time !== editTime() ? (slot.class + '-slot') : '')"
+                            [ngClass]="{ 
+                                'selected': slot.time === editTime(),
+                                'box-hover': slot.class === 'available' && editAppointmentId()
+                            }"
+                            (mouseenter)="showTooltip(slot.time)"
+                            (mouseleave)="hideTooltip()"
+                            (click)="slot.class === 'available' && editAppointmentId() && setAppointmentTime(slot.time)"
+                        >
+                            {{ slot.time| time12hr }}
+                        </div>
+                        @if (showOptions() && slot.time === showOptions()) {
+                            <div class="absolute w-32 h-20 bg-none"></div>
+                            <div class="absolute flex flex-col gap-5 p-5 top-10 bg-primary-color-lighter rounded-md shadow-xl z-50">
+                                <div class="text-wrap">
+                                    {{ slot.name }}
+                                </div>
+                                <div class="flex gap-5">
+                                    <button class="secondary-button" (click)="viewAppointments(slot.userId!, slot.name!)">View</button>
+                                    <button class="secondary-button" (click)="cancelAppointment(slot.id!)">Cancel</button>
+                                    <button class="secondary-button" (click)="editAppointment(slot); onMouseLeave();">Edit</button>
+                                </div>
+                            </div>
+                        }
+                        @if (!showOptions() && tooltipTime() && slot.time === tooltipTime()){
+                            <div class="absolute flex flex-col gap-5 p-5 top-10 bg-primary-color-lighter rounded-md shadow-md z-50">
+                                {{ slot.tooltip }}
+                            </div>
+                        } 
+                    </div>
+                }
+                @empty {
+                    <div>No Slots</div>
+                }
+            }       
+            @else {
+                <div>On Leave</div>
+            }
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #leaveTemplate>
+    <div>
+        <div class="text-xl">
+            Take Leave
+        </div>
+        @if (slots().length > 0) {
+            <div class="primary-font-color flex flex-wrap gap-4 py-5">
+                <div 
+                    [class]="'hover:cursor-pointer border rounded-full px-4 py-1 border-primary-color'"
+                    [ngClass]="{
+                        'selected': leaveType() === 'full',
+                    }"
+                    (click)="leaveType.set('full')"
+                >
+                    Full Day
+                </div>
+                <div 
+                    [class]="'hover:cursor-pointer border rounded-full px-4 py-1 border-primary-color'"
+                    [ngClass]="{
+                        'selected': leaveType() === 'firstHalf',
+                    }"
+                    (click)="leaveType.set('firstHalf')"
+                >
+                    First Half
+                </div>
+                <div 
+                    [class]="'hover:cursor-pointer border rounded-full px-4 py-1 border-primary-color'"
+                    [ngClass]="{
+                        'selected': leaveType() === 'secondHalf',
+                    }"
+                    (click)="leaveType.set('secondHalf')"
+                >
+                    Second Half
+                </div>
+                <div 
+                    [class]="'hover:cursor-pointer border rounded-full px-4 py-1 border-primary-color'"
+                    [ngClass]="{
+                        'selected': leaveType() === 'custom',
+                    }"
+                    (click)="leaveType.set('custom')"
+                >
+                    custom
+                </div>
+            </div>
+            @if (leaveType() === 'custom') {
+                <div>
+                    <div class="primary-font-color flex flex-wrap gap-4 py-5">
+                        @for (slot of slots(); track slot) {
+                            <div class="relative">
+                                <div 
+                                    [class]="'custom-box-hover border rounded-full px-4 py-1 border-primary-color ' + (!leaveSlots().includes(slot.time) ? slot.class : '')"
+                                    [ngClass]="{ 'leave': leaveSlots().includes(slot.time) }"
+                                    (click)="selectSlot(slot.time, slot.class)"
+                                    (mouseenter)="showTooltip(slot.time)"
+                                    (mouseleave)="hideTooltip()"
+                                >   
+                                    {{ slot.time | time12hr }}
+                                </div>
+                                @if (!showOptions() && tooltipTime() && slot.time === tooltipTime()){
+                                    <div style="left: 50%; transform: translateX(-50%);" class="absolute flex flex-col gap-5 p-5 top-10 bg-primary-color-lighter rounded-md shadow-md z-50">
+                                        {{ slot.tooltip }}
+                                    </div>
+                                } 
+                            </div>
+
+                        }
+                    </div>
+                </div>
+            }
+        }
+        @else {
+            <div class="py-5">Already Off</div>
+        }
+    </div>
+</ng-template>

@@ -1,0 +1,25 @@
+.custom-input:focus{
+    outline: none;
+    border: 2px solid var(--light-font);
+}
+.is-invalid{
+    border: 2px solid var(--error-color);
+}
+/* WebKit browsers */
+.date-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* Firefox */
+.date-input::-moz-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* Edge */
+.date-input::-ms-clear {
+    color: white;
+}
+.disabled{
+    background-color: var(--primary-color-lighter);
+    color: var(--light-font);
+}

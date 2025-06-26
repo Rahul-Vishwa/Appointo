@@ -1,0 +1,22 @@
+<div class="">
+    <div>
+        <label [for]="id()" class="light-font">{{label()}} 
+            @if (label() && isRequired) {
+                <span class="text-red-700">*</span>
+            }
+        </label>
+    </div>
+    <input 
+      [type]="type()"
+      [id]="id()"
+      [maxlength]="maxlength()"
+      [(ngModel)]="value"
+      autocomplete="off"
+      class="mt-1 w-56 h-9 px-4 border-1 rounded-md bg-primary-color-lighter primary-font-color border-primary-color custom-input"
+      [ngClass]="{'is-invalid':isInvalid}"
+      [placeholder]="placeholder()"
+      (input)="onInput($event)"
+      [disabled]="disabled()"
+    />
+</div>
+  

@@ -1,0 +1,20 @@
+<div class="z-50 fixed bg-primary-color h-screen bg-primary-color text-light-font border-r border-primary-color transition-all duration-300 ease-in-out overflow-hidden"
+    [ngClass]="{ 'w-12': !setClass(), 'w-52': setClass() }"
+    (mouseenter)="expandSidebar()"
+    (mouseleave)="shrinkSidebar()"
+>
+    <nav class="flex flex-col w-full mt-1">
+        @for (item of icons; track $index) {
+            <div class="p-1">
+                <div [routerLink]="item.route" routerLinkActive="active-route" class="rounded-sm overflow-hidden h-10 primary-font-color flex items-center gap-3 ps-3 hover-class">
+                    <div [innerHTML]="item.code">
+                    </div>
+                    @if (setClass()) {
+                        <span [innerHTML]="item.title"
+                        class="text-nowrap transition-opacity duration-300 opacity-100"></span>
+                    }
+                </div>
+            </div>
+        }
+    </nav>
+</div>

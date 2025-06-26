@@ -1,0 +1,102 @@
+<app-card [showFooter]="true">
+    <card-header>Book Appointment</card-header>
+    <card-body>
+
+        <div class="flex gap-20">
+            <div [formGroup]="form">
+                <app-calendar
+                    [formControl]="form.controls['date']"
+                    id="Calendar"
+                    [minDate]="minDate"
+                    [maxDate]="maxDate"
+                    (ngModelChange)="getSchedule()"
+                ></app-calendar>
+            </div>
+
+            <div>
+                <div class="text-xl">
+                    Available Slots
+                </div>
+                <div class="primary-font-color flex flex-wrap gap-4 py-5">
+                    @if (leave()?.leaveType !== 'full') {
+                        @for (slot of slots(); track slot) {
+                            <div class="relative">
+                                <div 
+                                    [class]="'hover:cursor-pointer custom-box custom-box-no-hover border rounded-full px-4 py-1 border-primary-color ' + slot.class"
+                                    [ngClass]="{
+                                        'selected': form.controls['time'].value === slot.time,
+                                        'custom-box-hover': editAppointmentId() || !userBookedSlot()
+                                    }"
+                                    (click)="
+                                        slot.class === 'available' &&
+                                        selectSlot(slot.time)
+                                    "
+                                    (mouseenter)="onMouseEnter(slot.time)"
+                                    (mouseleave)="onMouseLeave()"
+                                >
+                                    {{ slot.time | time12hr }}
+                                </div>
+                                @if (currentSlot() === slot.time) {
+                                    <div style="left: 50%; transform: translateX(-50%);" class="absolute px-5 py-3 top-10 bg-primary-color-lighter rounded-md shadow-md z-50">
+                                        {{ slot.tooltip }}
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @empty {
+                            <div>No Available Slots</div>
+                        }
+                    }
+                    @else {
+                        <div>On Leave</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </card-body>
+    <card-footer class="flex justify-between">
+        <div class="flex gap-10">
+            <div class="flex items-center gap-2">
+                <div class="unavailable w-5 h-5 rounded-sm"></div>
+                Unavailable
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="leave w-5 h-5 rounded-sm"></div>
+                Leave
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="booked w-5 h-5 rounded-sm"></div>
+                Booked
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="user-booked w-5 h-5 rounded-sm"></div>
+                Your Appointment
+            </div>
+        </div>
+        <div>
+            @if (userBookedSlot() && !editAppointmentId()) {
+                <div class="flex gap-5">
+                    <button class="primary-button" [disabled]="isPastAppointment()" (click)="cancel()">
+                        Cancel
+                    </button>
+                    <button class="secondary-button" [disabled]="isPastAppointment()" (click)="edit()">
+                        Edit
+                    </button>
+                </div>
+            }
+            @else {
+                <div class="flex gap-5">
+                    @if (editAppointmentId()) {
+                        <button class="primary-button" (click)="goBack()">
+                            Back
+                        </button>
+                    }
+                    <button class="secondary-button" [disabled]="form.invalid" (click)="book()">
+                        @if (editAppointmentId()) { Update } @else { Book }
+                    </button>
+                </div>
+            }
+        </div>
+    </card-footer>
+</app-card>

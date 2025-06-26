@@ -1,0 +1,62 @@
+.custom-box-hover:hover{
+    cursor: pointer;
+}
+.box-hover:hover{
+    background-color: var(--primary-color-lighter);
+    border-color: var(--primary-color-border);
+    color: var(--text-color);
+}
+.selected{
+    background-color: var(--primary-color-lighter);
+}
+
+.booked-slot{
+    background-color: var(--secondary-color);
+    color: var(--primary-color-lighter);
+    border: 1px solid var(--secondary-color);
+}
+
+.booked{
+    background-color: var(--secondary-color);
+    color: var(--primary-color-lighter);
+    border: 1px solid var(--secondary-color);
+}
+.booked:hover{
+    background-color: var(--secondary-color);
+    color: var(--primary-color-lighter);
+    border: 1px solid var(--secondary-color);
+}
+
+.unavailable{
+    background-color: rgb(141, 141, 141);
+    color: var(--primary-color-lighter);
+    border: 1px solid rgb(141, 141, 141);
+}
+.unavailable:hover{
+    background-color: rgb(141, 141, 141);
+    color: var(--primary-color-lighter);
+    border: 1px solid rgb(141, 141, 141);
+}
+
+.leave{
+    background-color: rgb(137, 201, 112);
+    color: var(--primary-color-lighter);
+    border: none;
+}
+.leave:hover{
+    background-color: rgb(137, 201, 112);
+    color: var(--primary-color-lighter);
+    border: none;
+}
+
+.leave-slot{
+    background-color: rgb(137, 201, 112);
+    color: var(--primary-color-lighter);
+    border: none;
+}
+
+.unavailable-slot{
+    background-color: rgb(141, 141, 141);
+    color: var(--primary-color-lighter);
+    border: 1px solid rgb(141, 141, 141);
+}

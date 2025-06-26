@@ -1,0 +1,47 @@
+<div class="">
+  <div>
+    <label [for]="id()" class="light-font">{{label()}}
+      @if (label() && isRequired) {
+          <span class="text-red-700">*</span>
+      } 
+    </label>
+  </div>
+  <div class="relative">
+    <button 
+      type="button"
+      [id]="id()"
+      (click)="toggleDropdown()"
+      class="mt-1 w-56 h-9 px-4 border-1 rounded-md bg-primary-color-lighter primary-font-color border-primary-color custom-dropdown flex items-center justify-between"
+      [ngClass]="{'is-invalid': isInvalid, 'is-open': isOpen}"
+    >
+      <span class="truncate">{{ getSelectedLabel() || 'Select an option' }}</span>
+      <svg 
+        class="w-4 h-4 transition-transform duration-200" 
+        [class.rotate-180]="isOpen"
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+    
+    @if (isOpen) {
+      <div 
+        class="dropdown-menu absolute z-10 w-56 mt-1 bg-primary-color-lighter rounded-md shadow-lg primary-font-color border border-primary-color max-h-60 overflow-auto"
+        (clickOutside)="closeDropdown()"
+      >
+        @for (option of options(); track $index) {
+          <div 
+            class="dropdown-item px-4 py-2 cursor-pointer transition-colors duration-150"
+            [class.selected]="value === option.value"
+            (click)="selectOption(option)"
+          >
+            {{ option.label }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+  

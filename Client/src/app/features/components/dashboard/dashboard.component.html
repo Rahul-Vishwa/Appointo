@@ -1,0 +1,112 @@
+<app-card>
+    <card-header>Dashboard</card-header>
+    <card-body>
+        <div class="mb-5">
+            Today
+        </div>
+        <div class="grid grid-cols-4 gap-10">
+            <div class="col-span-1 flex justify-between bg-primary-color-lighter p-5 px-7 rounded-md shadow-md">
+                <div>
+                    Total
+                </div>
+                <div>
+                    {{ analyticsToday()?.appointments }}
+                </div>
+            </div>
+            <div class="col-span-1 flex justify-between bg-primary-color-lighter p-5 px-7 rounded-md shadow-md">
+                <div>
+                    Upcoming
+                </div>
+                <div>
+                    {{ analyticsToday()?.upcomingAppointments }}
+                </div>
+            </div>
+            <div class="col-span-1 flex justify-between gap-2 bg-primary-color-lighter p-5 px-7 rounded-md shadow-md">
+                <div>
+                    Cancelled
+                </div>            
+                <div>
+                    {{ analyticsToday()?.cancellations }}
+                </div>
+            </div>
+            <div class="col-span-1 flex justify-between gap-2 bg-primary-color-lighter p-5 px-7 rounded-md shadow-md">
+                <div>
+                    Slots Left
+                </div>
+                <div>
+                    {{ analyticsToday()?.openSlotsLeft }}
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 grid grid-cols-2 gap-10">
+            <div class="col-span-1 flex justify-between bg-primary-color-lighter p-5 px-7 rounded-md shadow-md">
+                <div class="text-center w-full">
+                    <span [class]="getPercentageClass('today')"> {{ percentageAnalytics()?.today }} </span> in appointments as compared to yesterday.
+                </div>
+            </div>
+            <div class="col-span-1 flex justify-between bg-primary-color-lighter p-5 px-7 rounded-md shadow-md">
+                <div class="text-center w-full">
+                    <span [class]="getPercentageClass('month')"> {{ percentageAnalytics()?.month }} </span> in appointments as compared to previous month.
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10">
+            <div class="grid grid-cols-2 gap-10">
+                <div class="col-span-1">
+                    <div class="mb-5">
+                        Past 7 Days Appointments
+                    </div>
+                    <div class="w-full bg-primary-color-lighter p-5 rounded-md shadow-md">
+                        <canvas appChart
+                            [type]="'bar'"
+                            [data]="past7Days"
+                            [options]="chartOptions"
+                            height="140">
+                        </canvas>
+                    </div>
+                </div>
+                <div class="col-span-1">
+                    <div class="mb-5">
+                        Past 7 Days Cancelled Appointments
+                    </div>
+                    <div class="w-full bg-primary-color-lighter p-5 rounded-md shadow-md">
+                        <canvas appChart
+                            [type]="'bar'"
+                            [data]="past7DaysCancelled"
+                            [options]="chartOptions"
+                            height="140">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-1 mt-10">
+                <div class="mb-5">
+                    This Month Appointments
+                </div>
+                <div class="w-full bg-primary-color-lighter p-5 rounded-md shadow-md">
+                    <canvas appChart
+                        [type]="'bar'"
+                        [data]="thisMonth"
+                        [options]="chartOptions"
+                        height="70">
+                    </canvas>
+                </div>
+            </div>
+            <div class="col-span-1 mt-10">
+                <div class="mb-5">
+                    This Month's Cancelled Appointments
+                </div>
+                <div class="w-full bg-primary-color-lighter p-5 rounded-md shadow-md">
+                    <canvas appChart
+                        [type]="'bar'"
+                        [data]="thisMonthCancelled"
+                        [options]="chartOptions"
+                        height="70">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </card-body>
+</app-card>

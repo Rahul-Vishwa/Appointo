@@ -1,0 +1,98 @@
+<app-card>
+    <card-header class="flex justify-between">
+        <div>
+            Appointments
+        </div>
+        <div>
+            @if (userName()) {
+                <div>
+                    {{userName() | titlecase}}
+                </div>
+            }
+            @else {
+                <div></div>
+            }
+        </div>
+        <div class="text-[12px] flex items-center">
+            <div class="flex gap-5">
+                <div class="hover-text-color" (click)="decreasePage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+                        <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col items-end">
+                    Page {{ pagination.page }} of {{ pagination.totalPages }}
+                </div>
+                <div class="hover-text-color" (click)="increasePage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                        <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </card-header>
+    <card-body>
+
+        @if (role() === 'Admin' && allAppointments()) {
+            <div class="flex mb-10 gap-10">
+                <div 
+                    class="custom-box border rounded-full px-4 py-1 border-primary-color" 
+                    [class.selected] = "!pagination.futureAppointments"
+                    (click)="setPast()"
+                >
+                    Past Appointments
+                </div>
+                <div 
+                    class="custom-box border rounded-full px-4 py-1 border-primary-color" 
+                    [class.selected] = "!pagination.active"
+                    (click)="setActive()"
+                >
+                    Cancelled
+                </div>
+            </div>
+        }
+
+        <div class="grid grid-cols-3 gap-10 flex-wrap">
+            @for (appointment of appointments(); track appointment.id) {
+                <div class="col-span-1 flex flex-col gap-2 bg-primary-color-lighter p-5 rounded-md shadow-md">
+                    @if (role() === 'Admin' && allAppointments()) {
+                        <div class="flex justify-between">
+                            <div class="font-bold">Name</div>
+                            <div>{{ appointment.createdBy | titlecase }}</div>
+                        </div>
+                    }
+                    <div class="flex justify-between">
+                        <div class="font-bold">Date</div>
+                        <div>{{ appointment.date }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="font-bold">Time</div>
+                        <div>{{ appointment.time | time12hr }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="font-bold">Booked At</div>
+                        <div>{{ appointment.createdAt | date: 'yyyy-MM-dd hh:mm a' }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="font-bold">Rescheduled At</div>
+                        <div>{{ appointment.modifiedAt | date: 'yyyy-MM-dd hh:mm a' }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="font-bold">Rescheduled By</div>
+                        <div>{{ appointment.modifiedBy | titlecase }}</div>
+                    </div>
+                    <div class="mt-5">
+                        <div class="flex justify-end gap-5">
+                            <button class="primary-button" [disabled]="!pagination.active || isPastAppointment(appointment.date, appointment.time)" (click)="!pagination.active && cancel(appointment.id)">
+                                Cancel
+                            </button>
+                            <button class="secondary-button" [disabled]="!pagination.active || isPastAppointment(appointment.date, appointment.time)" (click)="!pagination.active && edit(appointment)">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </card-body>
+</app-card>

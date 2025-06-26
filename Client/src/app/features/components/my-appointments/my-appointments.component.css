@@ -1,0 +1,16 @@
+.hover-text-color:hover{
+    color: var(--secondary-color);
+    cursor: pointer;
+}
+
+.custom-box{
+    color: var(--text-color);
+}
+.custom-box:hover{
+    background-color: var(--primary-color-lighter);
+    cursor: pointer;
+}
+
+.selected{
+    background-color: var(--primary-color-lighter);
+}

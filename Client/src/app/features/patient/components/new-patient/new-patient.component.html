@@ -1,0 +1,202 @@
+<app-card>
+    <card-header>New Patient</card-header>
+    <card-body>
+        <div [formGroup]="form">
+            <!-- Patient Registration Fields -->
+            <div class="w-full">
+                <h3 class="text-lg font-semibold mb-3">Patient Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-5">
+                    <div>
+                        <app-input 
+                            [formControl]="form.controls['fullName']"
+                            id="np-fullName"
+                            type="text"
+                            label="Full Name"
+                            placeholder="Enter full name"
+                            [maxlength]="100"
+                        ></app-input>
+                    </div>
+
+                    <div>
+                        <app-datepicker 
+                            [formControl]="form.controls['dateOfBirth']"
+                            id="np-dateOfBirth"
+                            label="Date of Birth"
+                        ></app-datepicker>
+                    </div>
+
+                    <div>
+                        <app-dropdown 
+                            [formControl]="form.controls['gender']"
+                            id="np-gender"
+                            label="Gender"
+                            [options]="genderOptions"
+                        ></app-dropdown>
+                    </div>
+
+                    <div>
+                        <app-input 
+                            [formControl]="form.controls['phoneNumber']"
+                            id="np-phoneNumber"
+                            type="tel"
+                            label="Phone Number"
+                            placeholder="Enter phone number"
+                            [maxlength]="10"
+                        ></app-input>
+                    </div>
+
+                    <div>
+                        <app-input 
+                            [formControl]="form.controls['emailAddress']"
+                            id="np-emailAddress"
+                            type="email"
+                            label="Email Address"
+                            placeholder="Enter email address"
+                            [maxlength]="100"
+                        ></app-input>
+                    </div>
+
+                    <div>
+                        <app-textarea
+                            [formControl]="form.controls['address']"
+                            id="np-address"
+                            type="text"
+                            label="Address"
+                            placeholder="Enter address"
+                            [maxlength]="250"
+                        ></app-textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Information -->
+            <div class="w-full mt-8">
+                <h3 class="text-lg font-semibold mb-3">Medical Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-5">
+                    <div>
+                        <app-dropdown 
+                            [formControl]="form.controls['bloodGroup']"
+                            id="np-bloodGroup"
+                            label="Blood Group"
+                            [options]="bloodGroupOptions"
+                        ></app-dropdown>
+                    </div>
+
+                    <div>
+                        <app-input 
+                            [formControl]="form.controls['allergies']"
+                            id="np-allergies"
+                            type="text"
+                            label="Allergies"
+                            placeholder="Enter allergies"
+                            [maxlength]="100"
+                        ></app-input>
+                    </div>
+
+                    <div>
+                        <app-textarea
+                            [formControl]="form.controls['chronicConditions']"
+                            id="np-chronicConditions"
+                            type="text"
+                            label="Chronic Conditions"
+                            placeholder="Enter chronic conditions"
+                            [maxlength]="300"
+                        ></app-textarea>
+                    </div>
+
+                    <div>
+                        <app-textarea
+                            [formControl]="form.controls['medicalHistory']"
+                            id="np-medicalHistory"
+                            type="text"
+                            label="Medical History"
+                            placeholder="Enter medical history"
+                            [maxlength]="500"
+                        ></app-textarea>
+                    </div>
+
+                    <div>
+                        <app-textarea
+                            [formControl]="form.controls['currentMedications']"
+                            id="np-currentMedications"
+                            type="text"
+                            label="Current Medications"
+                            placeholder="Enter current medications"
+                            [maxlength]="300"
+                        ></app-textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administrative Info -->
+            <div class="w-full mt-8">
+                <h3 class="text-lg font-semibold mb-3">Administrative Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-5">
+                    <div>
+                        <app-input 
+                            [formControl]="form.controls['patientCode']"
+                            id="np-patientId"
+                            type="text"
+                            label="Patient ID"
+                            [readonly]="true"
+                            [disabled]="true"
+                        ></app-input>
+                    </div>
+
+                    <div>
+                        <app-datepicker
+                            [formControl]="form.controls['registrationDate']"
+                            id="np-registrationDate"
+                            type="date"
+                            label="Registration Date"
+                            [readonly]="true"
+                            [maxDate]="maxDate"
+                        ></app-datepicker>
+                    </div>
+
+                    <div>
+                        <app-dropdown 
+                            [formControl]="form.controls['assignedDoctor']"
+                            id="np-assignedDoctor"
+                            label="Assigned Doctor"
+                            [options]="doctorOptions"
+                        ></app-dropdown>
+                    </div>
+
+                    <div>
+                        <app-textarea
+                            [formControl]="form.controls['insuranceDetails']"
+                            id="np-insuranceDetails"
+                            type="text"
+                            label="Insurance Details"
+                            placeholder="Enter insurance details"
+                            [maxlength]="300"
+                        ></app-textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attachments -->
+            <div class="w-full mt-8">
+                <h3 class="text-lg font-semibold mb-3">Attachments</h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-5">
+                    <div>
+                        <app-input 
+                            [formControl]="form.controls['documents']"
+                            id="np-documents"
+                            type="file"
+                            label="ID Proof / Reports"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                        ></app-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </card-body>
+    <card-footer>
+        <div class="flex justify-end gap-3">
+            <button type="button" class="px-4 py-2 border border-primary-color rounded-md">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-secondary-color text-white rounded-md">Register Patient</button>
+        </div>
+    </card-footer>
+</app-card>

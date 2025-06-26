@@ -1,0 +1,18 @@
+<div class="flex gap-2 items-center">
+    <input 
+      [type]="'checkbox'"
+      [id]="id()"
+      [(ngModel)]="value"
+      [ngClass]="{'is-invalid':isInvalid}"
+      (input)="onInput($event)"
+      [disabled]="disabled()"
+    />
+    <div>
+        <label [for]="id()" class="light-font">{{label()}} 
+            @if (label() && isRequired) {
+                <span class="text-red-700">*</span>
+            }
+        </label>
+    </div>
+</div>
+  
